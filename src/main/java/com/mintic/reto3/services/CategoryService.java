@@ -1,0 +1,58 @@
+package com.mintic.reto3.services;
+
+import com.mintic.reto3.model.Category;
+import com.mintic.reto3.repository.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class CategoryService {
+
+    /* Logica del Negocio*/
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    public List<Category> getAll(){
+        return categoryRepository.getAll();
+    }
+
+    public Optional<Category> getCategory(int id){
+        return categoryRepository.getCategory(id);
+    }
+
+    public Category save(Category c){
+        if(c.getId()==null){
+            return categoryRepository.save(c);
+        }else{
+            Optional<Category> c1 = categoryRepository.getCategory(c.getId());
+            if(c1.isPresent()){
+                return categoryRepository.save(c);
+            }else{
+                return c;
+            }
+        }
+    }
+    public Category update(Category c){
+        if(c.getId() != null){
+            Optional<Category> caux = categoryRepository.getCategory(c.getId());
+            if(!caux.isEmpty()){
+                if(c.getDescription()!= null){
+                    caux.get().setDescription(c.getDescription());
+                }
+                if(c.getName() != null){
+                    caux.get().setName(c.getName());
+                }
+                categoryRepository.save(caux.get());
+                return caux.get();
+            } else {
+                return c;
+            }
+        }else{
+            return c;
+        }
+    }
+
+}
